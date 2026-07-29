@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, TypeVar
 from datetime import datetime
 import re
@@ -109,3 +109,4 @@ class CorpusPaper:
     abstract: str
     added_date: datetime
     paths: list[str]
+    tags: list[str] = field(default_factory=list)

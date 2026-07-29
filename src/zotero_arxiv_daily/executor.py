@@ -45,8 +45,10 @@ class Executor:
         collections = zot.everything(zot.collections())
         collections = {c['key']:c for c in collections}
         corpus = zot.everything(zot.items(itemType='conferencePaper || journalArticle || preprint'))
-        # --- 只需要插入下面這行加上 _noted and _key 標籤 ---
-        corpus = [c for c in corpus if any(t.get('tag') in ['_noted', '_key'] for t in c['data'].get('tags', []))]
+        # --- 根據 config 過濾帶有指定標籤的文獻 ---
+        target_tags = self.config.executor.get('corpus_tags')
+        if target_tags:
+            corpus = [c for c in corpus if any(t.get('tag') in target_tags for t in c['data'].get('tags', []))]
         corpus = [c for c in corpus if c['data']['abstractNote'] != '']
         def get_collection_path(col_key:str) -> str:
             if p := collections[col_key]['data']['parentCollection']:
@@ -61,7 +63,8 @@ class Executor:
             title=c['data']['title'],
             abstract=c['data']['abstractNote'],
             added_date=datetime.strptime(c['data']['dateAdded'], '%Y-%m-%dT%H:%M:%SZ'),
-            paths=c['paths']
+            paths=c['paths'],
+            tags=[t.get('tag') for t in c['data'].get('tags', []) if (target_tags and t.get('tag') in target_tags)]
         ) for c in corpus]
     
     def filter_corpus(self, corpus:list[CorpusPaper]) -> list[CorpusPaper]:
