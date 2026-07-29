@@ -24,4 +24,4 @@ source:
 executor:
   debug: ${oc.env:DEBUG,null}
   source: ['arxiv']
-  corpus_tags: ['_noted', '_key', '_AI']
+  corpus_tags: ['_key', '_AI']
